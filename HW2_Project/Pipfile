@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+channels = "*"
+torch = "*"
+transformers = "*"
+sentencepiece = "*"
+accelerate = "*"
+protobuf = "*"
+uvicorn = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.10"

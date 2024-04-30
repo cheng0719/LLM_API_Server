@@ -1,0 +1,58 @@
+<!-- Demo_App/templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HW2</title>
+</head>
+<body>
+    <h1>Enter your prompt:</h1>
+    <form id="prompt-form">
+        {% csrf_token %}
+        <textarea id="prompt-input" rows="4" cols="50"></textarea><br>
+        <button type="submit">Submit</button>
+        <button type="button" id="refresh-button">Refresh</button>
+    </form>
+    
+    <div id="response"></div>
+
+    <script>
+        // submit form
+        document.getElementById('prompt-form').onsubmit = async function(e) {
+            e.preventDefault();
+            let prompt = document.getElementById('prompt-input').value;
+            let responseDiv = document.getElementById('response');
+
+            try {
+                let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                let result = await fetch('/prompt/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+                
+                let data = await result.json();
+                if (data.status) {
+                    responseDiv.innerText = 'Response: ' + data.data;
+                } else {
+                    responseDiv.innerText = 'Error: ' + data.message;
+                }
+            } catch (error) {
+                // responseDiv.innerText = 'Error: ' + error;
+                responseDiv.innerText = 'Error: ' + (error.message || 'Unknown error');
+                console.log(error);
+            }
+        }
+
+        // Refresh button
+        document.getElementById('refresh-button').onclick = function(e) {
+            document.getElementById('prompt-input').value = ''; // 清空 prompt 輸入框
+            document.getElementById('response').innerText = ''; // 清空 response 顯示區域
+        }
+    </script>
+</body>
+</html>
